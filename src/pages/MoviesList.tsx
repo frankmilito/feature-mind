@@ -11,7 +11,6 @@ const MovieListPage: React.FC = () => {
   useEffect(() => {
     searchMovies("Avengers");
   }, [searchMovies]);
-
   return (
     <div className="container p-4 mx-auto">
       <div className="flex items-center justify-between mb-4">

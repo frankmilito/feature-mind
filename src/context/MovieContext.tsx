@@ -1,18 +1,28 @@
-import { createContext, ReactNode, useCallback, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import axios from "axios";
 
-interface Movie {
+type Movie = {
   imdbID: string;
   Title: string;
   Poster: string;
-  Year: string;
-}
+  Year?: string;
+};
 
-interface MovieContextProps {
+type MovieContextProps = {
   movies: Movie[];
   searchMovies: (query: string) => void;
   addMovie: (movie: Movie) => void;
-}
+  setSearchQueries: Dispatch<SetStateAction<string[]>>;
+  searchQueries: string[];
+};
 
 export const MovieContext = createContext<MovieContextProps | undefined>(
   undefined
@@ -20,6 +30,10 @@ export const MovieContext = createContext<MovieContextProps | undefined>(
 
 export const MovieProvider = ({ children }: { children: ReactNode }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [searchQueries, setSearchQueries] = useState<Array<string>>(() => {
+    const savedQueries = localStorage.getItem("recentQueries");
+    return savedQueries ? JSON.parse(savedQueries) : [];
+  });
 
   const searchMovies = useCallback(async (query: string) => {
     const response = await axios.get(
@@ -32,9 +46,12 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
     setMovies((prevMovies) => [movie, ...prevMovies]);
   };
 
+  const value = useMemo(
+    () => ({ movies, searchMovies, addMovie, searchQueries, setSearchQueries }),
+    [movies, searchMovies, searchQueries]
+  );
+
   return (
-    <MovieContext.Provider value={{ movies, searchMovies, addMovie }}>
-      {children}
-    </MovieContext.Provider>
+    <MovieContext.Provider value={value}>{children}</MovieContext.Provider>
   );
 };

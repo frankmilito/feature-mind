@@ -7,12 +7,13 @@ type AddMovieModalProps = {
 
 const AddMovieModal = ({ onClose }: AddMovieModalProps) => {
   const { addMovie } = useContext(MovieContext)!;
-  const [title, setTitle] = useState("");
-  const [poster, setPoster] = useState("");
+  const [Title, setTitle] = useState("");
+  const [Poster, setPoster] = useState("");
+  const [Year, setYear] = useState("");
 
   const handleSubmit = () => {
-    if (title && poster) {
-      addMovie({ id: Date.now().toString(), title, poster });
+    if (Title && Poster) {
+      addMovie({ imdbID: Date.now().toString(), Poster, Title, Year });
       onClose();
     }
   };
@@ -23,17 +24,24 @@ const AddMovieModal = ({ onClose }: AddMovieModalProps) => {
         <h2 className="mb-4 text-2xl">Add a New Movie</h2>
         <input
           type="text"
-          value={title}
+          value={Title}
           onChange={(e) => setTitle(e.target.value)}
           className="w-full p-2 mb-4 border"
           placeholder="Movie Title"
         />
         <input
           type="text"
-          value={poster}
+          value={Poster}
           onChange={(e) => setPoster(e.target.value)}
           className="w-full p-2 mb-4 border"
           placeholder="Poster URL"
+        />
+        <input
+          type="number"
+          value={Year}
+          onChange={(e) => setYear(e.target.value)}
+          className="w-full p-2 mb-4 border"
+          placeholder="Movie Year"
         />
         <div className="flex justify-end space-x-2">
           <button
