@@ -24,6 +24,7 @@ type MovieContextProps = {
   setQuery: Dispatch<SetStateAction<string>>;
   recentSearchQueries: string[];
   query: string;
+  loading: boolean;
 };
 
 export const MovieContext = createContext<MovieContextProps | undefined>(
@@ -32,6 +33,7 @@ export const MovieContext = createContext<MovieContextProps | undefined>(
 
 export const MovieProvider = ({ children }: { children: ReactNode }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [recentSearchQueries, setRecentSearchQueries] = useState<Array<string>>(
     () => {
@@ -41,10 +43,18 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const searchMovies = useCallback(async (query: string) => {
-    const response = await axios.get(
-      `https://www.omdbapi.com/?s=${query}&apikey=e6c0da32`
-    );
-    setMovies(response.data.Search || []);
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `https://www.omdbapi.com/?s=${query}&apikey=e6c0da32`
+      );
+      setMovies(response.data.Search || []);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const addMovie = (movie: Movie) => {
@@ -60,6 +70,7 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
       setRecentSearchQueries,
       setQuery,
       query,
+      loading,
     }),
     [
       movies,
@@ -68,6 +79,7 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
       setQuery,
       searchMovies,
       query,
+      loading,
     ]
   );
 

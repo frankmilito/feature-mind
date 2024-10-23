@@ -4,9 +4,10 @@ import SearchBar from "../components/SearchBar";
 import AddMovieModal from "../components/AddMovieModal";
 import { useMovies } from "../hooks/useMovies";
 import { useDebounce } from "../hooks/useDebounce";
+import Loader from "../components/Loader";
 
 const MovieListPage: React.FC = () => {
-  const { movies, searchMovies, query } = useMovies();
+  const { movies, searchMovies, query, loading } = useMovies();
   const [isModalOpen, setModalOpen] = useState(false);
   const debouncedValue = useDebounce(query, 300);
 
@@ -29,21 +30,25 @@ const MovieListPage: React.FC = () => {
         </button>
       </div>
       {isModalOpen && <AddMovieModal onClose={() => setModalOpen(false)} />}
-      <div className="grid grid-cols-4 gap-4">
-        {filteredMovies.map((movie) => (
-          <Link to={`/movie/${movie.imdbID}`} key={movie.imdbID}>
-            <div className="p-4 bg-gray-200 rounded">
-              <img
-                src={movie.Poster}
-                alt={movie.Title}
-                className="object-cover w-full h-60"
-              />
-              <h3 className="mt-2 font-bold">{movie.Title}</h3>
-              <p className="mt-2 font-bold">{movie.Year}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className="grid grid-cols-4 gap-4">
+          {filteredMovies.map((movie) => (
+            <Link to={`/movie/${movie.imdbID}`} key={movie.imdbID}>
+              <div className="p-4 bg-gray-200 rounded">
+                <img
+                  src={movie.Poster}
+                  alt={movie.Title}
+                  className="object-cover w-full h-60"
+                />
+                <h3 className="mt-2 font-bold">{movie.Title}</h3>
+                <p className="mt-2 font-bold">{movie.Year}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

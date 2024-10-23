@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useMovies } from "../hooks/useMovies";
+import useClickOutside from "../pages/useClickOutside";
 
 type SearchBarProps = {
   onSearch: (query: string) => void;
@@ -27,8 +28,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     localStorage.setItem("recentQueries", JSON.stringify(recentSearchQueries));
   }, [recentSearchQueries]);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useClickOutside(containerRef, () => setShowRecent(false));
+
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col" ref={containerRef}>
       <div className="flex space-x-2 ">
         <input
           type="text"
