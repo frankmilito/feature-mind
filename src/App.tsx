@@ -1,8 +1,11 @@
+import { Routes, Route } from "react-router-dom";
+import MoviesList from "./pages/MoviesList";
+
 function App() {
   return (
-    <div className="p-3 bg-blue-400">
-      <p className="text-3xl bg-red-400">hello vite</p>
-    </div>
+    <Routes>
+      <Route index element={<MoviesList />} />
+    </Routes>
   );
 }
 
