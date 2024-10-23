@@ -2,9 +2,10 @@ import { createContext, ReactNode, useCallback, useState } from "react";
 import axios from "axios";
 
 interface Movie {
-  id: string;
-  title: string;
-  poster: string;
+  imdbID: string;
+  Title: string;
+  Poster: string;
+  Year: string;
 }
 
 interface MovieContextProps {

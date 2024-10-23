@@ -10,7 +10,7 @@ const MovieListPage: React.FC = () => {
 
   useEffect(() => {
     searchMovies("Avengers");
-  }, []);
+  }, [searchMovies]);
 
   return (
     <div className="container p-4 mx-auto">
@@ -26,14 +26,15 @@ const MovieListPage: React.FC = () => {
       {isModalOpen && <AddMovieModal onClose={() => setModalOpen(false)} />}
       <div className="grid grid-cols-4 gap-4">
         {movies.map((movie) => (
-          <Link to={`/movie/${movie.id}`} key={movie.id}>
+          <Link to={`/movie/${movie.imdbID}`} key={movie.imdbID}>
             <div className="p-4 bg-gray-200 rounded">
               <img
-                src={movie.poster}
-                alt={movie.title}
+                src={movie.Poster}
+                alt={movie.Title}
                 className="object-cover w-full h-60"
               />
-              <h3 className="mt-2 font-bold">{movie.title}</h3>
+              <h3 className="mt-2 font-bold">{movie.Title}</h3>
+              <p className="mt-2 font-bold">{movie.Year}</p>
             </div>
           </Link>
         ))}
