@@ -1,11 +1,10 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useCallback, useState } from "react";
 import axios from "axios";
 
 interface Movie {
   id: string;
   title: string;
   poster: string;
-  // other movie properties
 }
 
 interface MovieContextProps {
@@ -21,12 +20,12 @@ export const MovieContext = createContext<MovieContextProps | undefined>(
 export const MovieProvider = ({ children }: { children: ReactNode }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
 
-  const searchMovies = async (query: string) => {
+  const searchMovies = useCallback(async (query: string) => {
     const response = await axios.get(
       `https://www.omdbapi.com/?s=${query}&apikey=e6c0da32`
     );
     setMovies(response.data.Search || []);
-  };
+  }, []);
 
   const addMovie = (movie: Movie) => {
     setMovies((prevMovies) => [movie, ...prevMovies]);
