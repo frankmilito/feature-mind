@@ -14,7 +14,14 @@ function App() {
           </MovieProvider>
         }
       />
-      <Route path="/movie/id" element={<MovieDetailsPage />} />
+      <Route
+        path="/movie/:id"
+        element={
+          <MovieProvider>
+            <MovieDetailsPage />
+          </MovieProvider>
+        }
+      />
     </Routes>
   );
 }
