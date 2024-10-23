@@ -3,14 +3,20 @@ import { Link } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import AddMovieModal from "../components/AddMovieModal";
 import { useMovies } from "../hooks/useMovies";
+import { useDebounce } from "../hooks/useDebounce";
 
 const MovieListPage: React.FC = () => {
-  const { movies, searchMovies } = useMovies();
+  const { movies, searchMovies, query } = useMovies();
   const [isModalOpen, setModalOpen] = useState(false);
+  const debouncedValue = useDebounce(query, 300);
 
   useEffect(() => {
     searchMovies("Avengers");
   }, [searchMovies]);
+
+  const filteredMovies = movies.filter((movie) =>
+    movie.Title.toLocaleLowerCase().includes(debouncedValue)
+  );
   return (
     <div className="container p-4 mx-auto">
       <div className="flex items-center justify-between mb-4">
@@ -24,7 +30,7 @@ const MovieListPage: React.FC = () => {
       </div>
       {isModalOpen && <AddMovieModal onClose={() => setModalOpen(false)} />}
       <div className="grid grid-cols-4 gap-4">
-        {movies.map((movie) => (
+        {filteredMovies.map((movie) => (
           <Link to={`/movie/${movie.imdbID}`} key={movie.imdbID}>
             <div className="p-4 bg-gray-200 rounded">
               <img

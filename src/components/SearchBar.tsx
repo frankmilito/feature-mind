@@ -7,25 +7,25 @@ type SearchBarProps = {
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const inputRef = useRef(null);
-  const [query, setQuery] = useState("");
   const [showRecentQuery, setShowRecent] = useState(false);
-  const { setSearchQueries, searchQueries } = useMovies();
+  const { setRecentSearchQueries, recentSearchQueries, setQuery, query } =
+    useMovies();
   const handleSearch = () => {
     if (query) {
       onSearch(query);
-      setSearchQueries((prev) => [query, ...prev]);
+      setRecentSearchQueries((prev) => [query, ...prev]);
     }
   };
 
   const filteredItems = useMemo(() => {
-    return searchQueries
-      .filter((searchQuery) => searchQuery.includes(query))
+    return recentSearchQueries
+      .filter((recentQuery) => recentQuery.includes(query))
       .slice(0, 10);
-  }, [query, searchQueries]);
+  }, [query, recentSearchQueries]);
 
   useEffect(() => {
-    localStorage.setItem("recentQueries", JSON.stringify(searchQueries));
-  }, [searchQueries]);
+    localStorage.setItem("recentQueries", JSON.stringify(recentSearchQueries));
+  }, [recentSearchQueries]);
 
   return (
     <div className="flex flex-col">
