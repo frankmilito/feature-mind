@@ -1,19 +1,18 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useMovies } from "../hooks/useMovies";
-import useClickOutside from "../pages/useClickOutside";
+import useClickOutside from "../hooks/useClickOutside";
+import { MovieContextProps } from "../context/MovieContext";
 
-type SearchBarProps = {
-  onSearch: (query: string) => void;
-};
-
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+const SearchBar: React.FC<Pick<MovieContextProps, "searchMovies">> = ({
+  searchMovies,
+}) => {
   const inputRef = useRef(null);
   const [showRecentQuery, setShowRecent] = useState(false);
   const { setRecentSearchQueries, recentSearchQueries, setQuery, query } =
     useMovies();
   const handleSearch = () => {
     if (query) {
-      onSearch(query);
+      searchMovies(query);
       setRecentSearchQueries((prev) => [query, ...prev]);
     }
   };

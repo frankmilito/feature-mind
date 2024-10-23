@@ -5,35 +5,66 @@ import AddMovieModal from "../components/AddMovieModal";
 import { useMovies } from "../hooks/useMovies";
 import { useDebounce } from "../hooks/useDebounce";
 import Loader from "../components/Loader";
+import Button from "../components/Button";
 
 const MovieListPage: React.FC = () => {
-  const { movies, searchMovies, query, loading } = useMovies();
+  const {
+    movies,
+    searchMovies,
+    query,
+    loading,
+    error,
+    totalResults,
+    setQuery,
+  } = useMovies();
   const [isModalOpen, setModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const debouncedValue = useDebounce(query, 300);
 
+  const moviesPerPage = 10;
+  const totalPages = Math.ceil(totalResults / moviesPerPage);
+
   useEffect(() => {
-    searchMovies("Avengers");
+    searchMovies("Avengers", currentPage);
   }, [searchMovies]);
 
   const filteredMovies = movies.filter((movie) =>
     movie.Title.toLocaleLowerCase().includes(debouncedValue)
   );
+
+  const handleSearch = (newQuery: string) => {
+    setQuery(newQuery);
+    setCurrentPage(1); // Reset to first page when a new search is made
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
   return (
     <div className="container p-4 mx-auto">
       <div className="flex items-center justify-between mb-4">
-        <SearchBar onSearch={searchMovies} />
-        <button
-          onClick={() => setModalOpen(true)}
-          className="px-4 py-2 text-white bg-blue-500 rounded"
-        >
-          Add New
-        </button>
+        <SearchBar searchMovies={searchMovies} />
+        <Button title="Add New" onClickHandler={() => setModalOpen(true)} />
       </div>
       {isModalOpen && <AddMovieModal onClose={() => setModalOpen(false)} />}
+      {error && (
+        <div>
+          <h1>Something went wrong</h1>
+        </div>
+      )}
       {loading ? (
         <Loader />
       ) : (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid gap-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
           {filteredMovies.map((movie) => (
             <Link to={`/movie/${movie.imdbID}`} key={movie.imdbID}>
               <div className="p-4 bg-gray-200 rounded">
@@ -49,6 +80,31 @@ const MovieListPage: React.FC = () => {
           ))}
         </div>
       )}
+      <div className="flex justify-between mt-4">
+        <button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          className={`px-4 py-2 rounded ${
+            currentPage === 1 ? "bg-gray-300" : "bg-blue-500 text-white"
+          }`}
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+          className={`px-4 py-2 rounded ${
+            currentPage === totalPages
+              ? "bg-gray-300"
+              : "bg-blue-500 text-white"
+          }`}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };

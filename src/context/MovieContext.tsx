@@ -16,15 +16,17 @@ type Movie = {
   Year?: string;
 };
 
-type MovieContextProps = {
+export type MovieContextProps = {
   movies: Movie[];
-  searchMovies: (query: string) => void;
+  searchMovies: (query: string, page?: number) => void;
   addMovie: (movie: Movie) => void;
   setRecentSearchQueries: Dispatch<SetStateAction<string[]>>;
   setQuery: Dispatch<SetStateAction<string>>;
   recentSearchQueries: string[];
   query: string;
   loading: boolean;
+  error: boolean;
+  totalResults: number;
 };
 
 export const MovieContext = createContext<MovieContextProps | undefined>(
@@ -35,6 +37,8 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
+  const [error, setError] = useState(false);
+  const [totalResults, setTotalResults] = useState(0);
   const [recentSearchQueries, setRecentSearchQueries] = useState<Array<string>>(
     () => {
       const savedQueries = localStorage.getItem("recentQueries");
@@ -42,14 +46,16 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
     }
   );
 
-  const searchMovies = useCallback(async (query: string) => {
+  const searchMovies = useCallback(async (query: string, page?: number) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://www.omdbapi.com/?s=${query}&apikey=e6c0da32`
+        `https://www.omdbapi.com/?s=${query}&page=${page}&apikey=e6c0da32`
       );
       setMovies(response.data.Search || []);
+      setTotalResults(+response.data.totalResults);
     } catch (error) {
+      setError(true);
       console.error(error);
       setLoading(false);
     } finally {
@@ -71,6 +77,8 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
       setQuery,
       query,
       loading,
+      totalResults,
+      error,
     }),
     [
       movies,
@@ -80,6 +88,8 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
       searchMovies,
       query,
       loading,
+      totalResults,
+      error,
     ]
   );
 
