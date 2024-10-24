@@ -1,18 +1,17 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useMovies } from "../hooks/useMovies";
 import useClickOutside from "../hooks/useClickOutside";
-import { MovieContextProps } from "../context/MovieContext";
+import Input from "./Input";
+import Button from "./Button";
 
-const SearchBar: React.FC<Pick<MovieContextProps, "searchMovies">> = ({
-  searchMovies,
-}) => {
-  const inputRef = useRef(null);
+const SearchBar = ({ onSearch }: { onSearch: VoidFunction }) => {
   const [showRecentQuery, setShowRecent] = useState(false);
   const { setRecentSearchQueries, recentSearchQueries, setQuery, query } =
     useMovies();
+
   const handleSearch = () => {
-    if (query) {
-      searchMovies(query);
+    if (query.trim()) {
+      onSearch();
       setRecentSearchQueries((prev) => [query, ...prev]);
     }
   };
@@ -31,39 +30,34 @@ const SearchBar: React.FC<Pick<MovieContextProps, "searchMovies">> = ({
 
   useClickOutside(containerRef, () => setShowRecent(false));
 
+  const handleQueryChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+  };
   return (
     <div className="flex flex-col" ref={containerRef}>
       <div className="flex space-x-2 ">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="w-64 p-2 border rounded"
+        <Input
           placeholder="Search for movies..."
-          ref={inputRef}
+          value={query}
+          onChange={handleQueryChange}
           onClick={() => setShowRecent(true)}
         />
-        <button
-          onClick={handleSearch}
-          className="px-4 py-2 text-white bg-blue-500 rounded"
-        >
-          Search
-        </button>
+        <Button title="Search" onClick={handleSearch} />
       </div>
       <div className="relative">
-        <div className="absolute w-64 ">
+        <div className="absolute z-20 w-64">
           {showRecentQuery && (
             <ul className=" bg-[#ececec] rounded-b-md">
               {filteredItems.map((item, index) => (
                 <li
-                  className="p-2 text-xs border-b-2 hover:bg-white"
+                  className="p-2 text-xs italic border-b-2 hover:bg-white"
                   key={index}
                   onClick={() => setQuery(item)}
                 >
                   {item}
                 </li>
               ))}
-              <p className="p-2 text-xs italic border-t-2 border-gray-300">
+              <p className="p-2 text-xs italic font-semibold border-t-2 border-gray-300">
                 Last 10 search results
               </p>
             </ul>

@@ -13,11 +13,7 @@ const MovieDetailsPage = () => {
 
   return (
     <div className="container p-4 mx-auto">
-      <Button
-        className="mb-4 "
-        title="Back"
-        onClickHandler={() => navigate(-1)}
-      />
+      <Button className="mb-4 " title="Back" onClick={() => navigate(-1)} />
       <h1 className="text-4xl font-bold">{movie.Title}</h1>
       <img
         src={movie.Poster}

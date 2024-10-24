@@ -1,18 +1,13 @@
-import React, { HTMLAttributes } from "react";
+import React, { ButtonHTMLAttributes } from "react";
 
-interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   title: string;
-  onClickHandler?: VoidFunction;
 }
-const Button: React.FC<ButtonProps> = ({
-  title,
-  onClickHandler,
-  className,
-}) => {
+const Button: React.FC<ButtonProps> = ({ title, className, ...props }) => {
   return (
     <button
-      onClick={onClickHandler}
       className={`px-4 py-2 text-white bg-blue-500 rounded ${className}`}
+      {...props}
     >
       {title}
     </button>

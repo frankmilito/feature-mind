@@ -4,10 +4,12 @@ import {
   ReactNode,
   SetStateAction,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 type Movie = {
   imdbID: string;
@@ -27,6 +29,7 @@ export type MovieContextProps = {
   loading: boolean;
   error: boolean;
   totalResults: number;
+  searchQuery: string;
 };
 
 export const MovieContext = createContext<MovieContextProps | undefined>(
@@ -34,9 +37,12 @@ export const MovieContext = createContext<MovieContextProps | undefined>(
 );
 
 export const MovieProvider = ({ children }: { children: ReactNode }) => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const searchQuery = queryParams.get("query") || "Avengers";
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(searchQuery);
   const [error, setError] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
   const [recentSearchQueries, setRecentSearchQueries] = useState<Array<string>>(
@@ -46,11 +52,15 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
     }
   );
 
+  useEffect(() => {
+    setQuery(searchQuery);
+  }, [searchQuery]);
+
   const searchMovies = useCallback(async (query: string, page?: number) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://www.omdbapi.com/?s=${query}&page=${page}&apikey=e6c0da32`
+        `https://www.omdbapi.com/?s=${query}&type=&page=${page}&apikey=e6c0da32`
       );
       setMovies(response.data.Search || []);
       setTotalResults(+response.data.totalResults);
@@ -79,6 +89,7 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
       loading,
       totalResults,
       error,
+      searchQuery,
     }),
     [
       movies,
@@ -90,6 +101,7 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
       loading,
       totalResults,
       error,
+      searchQuery,
     ]
   );
 
