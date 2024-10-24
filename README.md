@@ -1,50 +1,35 @@
-# React + TypeScript + Vite
+# Movie List Application
+A simple and intuitive movie list application that allows users to search for movies, view details, and manage their favorite movie lists. The app leverages the OMDb API to fetch movie data and utilizes React Context for state management and caching to enhance the user experience.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Features
+Search for Movies: Users can search for movies by title, with the ability to paginate through results.
+Movie Details: View detailed information about each movie, including the title, year, poster, and type. \
+Caching: Efficient caching mechanism to store movie search results and avoid unnecessary API calls when navigating through pages. \
+Persistent Data: Recent searches and favorite movies are stored in local storage for a seamless user experience, even after page refreshes. \
+Responsive Design: The application is designed to be responsive and accessible across devices.
+#### Technologies Used
+React: JavaScript library for building user interfaces. \
+Axios: Promise-based HTTP client for making API requests. \
+React Router: Declarative routing for React applications. \
+TypeScript: For better code quality and maintainability. 
 
-Currently, two official plugins are available:
+## Getting Started
+To run the movie list application locally, follow these steps:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Prerequisites
+Node.js (v14 or later)
+npm (v5.6.0 or later)
+Installation
+Clone the repository: \
+RUN ``` npm install``` \
+RUN ``` npm run dev```
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Usage
+Enter a movie title in the search bar to find movies.
+Navigate through pages of results using the pagination controls.
+Click on a movie to view detailed information.
+Recent searches and favorite movies will be saved and persist across refreshes.
+## API Reference
+The application uses the OMDb API for movie data. Make sure to replace the apikey in the code with your own API key if necessary.
