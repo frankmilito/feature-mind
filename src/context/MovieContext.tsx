@@ -41,6 +41,7 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const searchQuery = queryParams.get("query") || "Avengers";
+
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState(searchQuery);
@@ -107,7 +108,7 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
   const addMovie = useCallback((movie: Movie) => {
     setMovies((prevMovies) => {
       const updatedMovies = [movie, ...prevMovies];
-      localStorage.setItem("movieList", JSON.stringify(updatedMovies)); // Save updated movie list to localStorage
+      localStorage.setItem("movieList", JSON.stringify(updatedMovies));
       return updatedMovies;
     });
   }, []);

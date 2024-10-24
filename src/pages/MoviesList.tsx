@@ -58,9 +58,9 @@ const MovieListPage: React.FC = () => {
 
   return (
     <div className="container p-4 mx-auto">
-      <div className="flex flex-col items-center mb-4 md:flex-row md:justify-between">
+      <div className="flex flex-col mb-4 md:items-center md:flex-row md:justify-between sm:items-start">
         <SearchBar onSearch={handleSearch} />
-        <div className="flex items-end justify-center w-full gap-4 md:w-auto">
+        <div className="flex items-end w-full gap-4 mt-4 md:mt-0 md:w-auto">
           <Button title="Add New" onClick={openModal} />
         </div>
       </div>
