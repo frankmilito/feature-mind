@@ -10,7 +10,7 @@ export const Movies: React.FC<Movie> = ({
   Type,
 }) => {
   return (
-    <Link to={`/movie/${imdbID}`} key={imdbID}>
+    <Link to={`/movie/${imdbID}`} key={imdbID} className="mx-auto">
       <div className="p-4 bg-gray-200 rounded">
         <img
           src={Poster}
