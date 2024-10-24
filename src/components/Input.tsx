@@ -1,8 +1,4 @@
-import {
-  ChangeEventHandler,
-  InputHTMLAttributes,
-  MouseEventHandler,
-} from "react";
+import { InputHTMLAttributes } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   value: string;
@@ -18,7 +14,7 @@ const Input: React.FC<InputProps> = ({
     <input
       type={type}
       value={value}
-      className={`w-64 p-2 border rounded ${className}`}
+      className={`w-64 p-2 border rounded text-xs ${className}`}
       placeholder="Search for movies..."
       {...props}
     />

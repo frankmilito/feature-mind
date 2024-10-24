@@ -1,7 +1,7 @@
 const Loader = () => {
   return (
-    <div className="grid grid-cols-4 gap-4">
-      {[1, 2, 3, 4].map((el) => (
+    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+      {[1, 2, 3].map((el) => (
         <div
           key={el}
           className="p-4 bg-white rounded-lg shadow-md animate-pulse"

@@ -1,14 +1,18 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useMovies } from "../hooks/useMovies";
 import Button from "../components/Button";
+import { EmptyState } from "../components/EmptyState";
+import { Movie } from "../context/MovieContext";
+import { useMovies } from "../hooks/useMovies";
 
 const MovieDetailsPage = () => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
   const { movies } = useMovies();
-  const movie = movies.find((m) => m.imdbID === id);
+  const { id } = useParams<{ id: string }>();
+
+  const movie = movies.find((m: Movie) => m.imdbID === id);
+
   if (!movie) {
-    return <div>Movie not found</div>;
+    return <EmptyState>Movie not found</EmptyState>;
   }
 
   return (
@@ -19,6 +23,7 @@ const MovieDetailsPage = () => {
         src={movie.Poster}
         alt={movie.Title}
         className="object-cover mt-4 w-96 h-96"
+        rel="preload"
       />
       <h3 className="mt-2 font-bold">Title: {movie.Title}</h3>
       <p className="mt-2 font-bold">Year: {movie.Year}</p>

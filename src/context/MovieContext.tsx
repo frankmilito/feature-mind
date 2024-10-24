@@ -11,11 +11,12 @@ import {
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 
-type Movie = {
+export type Movie = {
   imdbID: string;
   Title: string;
   Poster: string;
   Year?: string;
+  Type?: string;
 };
 
 export type MovieContextProps = {
@@ -45,6 +46,14 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
   const [query, setQuery] = useState(searchQuery);
   const [error, setError] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
+  // Cache to store movies
+  const [movieCache, setMovieCache] = useState<
+    Record<string, Record<number, Movie[]>>
+  >(() => {
+    const savedCache = localStorage.getItem("movieCache");
+    return savedCache ? JSON.parse(savedCache) : {};
+  });
+
   const [recentSearchQueries, setRecentSearchQueries] = useState<Array<string>>(
     () => {
       const savedQueries = localStorage.getItem("recentQueries");
@@ -56,26 +65,52 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
     setQuery(searchQuery);
   }, [searchQuery]);
 
-  const searchMovies = useCallback(async (query: string, page?: number) => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `https://www.omdbapi.com/?s=${query}&type=&page=${page}&apikey=e6c0da32`
-      );
-      setMovies(response.data.Search || []);
-      setTotalResults(+response.data.totalResults);
-    } catch (error) {
-      setError(true);
-      console.error(error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const searchMovies = useCallback(
+    async (query: string, page: number = 1) => {
+      //check if movie exists in cache
+      if (movieCache[query]?.[page]) {
+        setMovies(movieCache[query][page]);
+        return;
+      }
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `https://www.omdbapi.com/?s=${query}&page=${page}&apikey=e6c0da32`
+        );
+        const fetchedMovies = response.data.Search || [];
+        setMovies(fetchedMovies);
+        setTotalResults(+response.data.totalResults);
+        setMovieCache((prevCache) => {
+          const newCache = {
+            ...prevCache,
+            [query]: {
+              ...prevCache[query],
+              [page]: fetchedMovies,
+            },
+          };
+          localStorage.setItem("movieCache", JSON.stringify(newCache));
+          return newCache;
+        });
 
-  const addMovie = (movie: Movie) => {
-    setMovies((prevMovies) => [movie, ...prevMovies]);
-  };
+        setError(false);
+      } catch (error) {
+        setError(true);
+        console.error(error);
+        setLoading(false);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [movieCache]
+  );
+
+  const addMovie = useCallback((movie: Movie) => {
+    setMovies((prevMovies) => {
+      const updatedMovies = [movie, ...prevMovies];
+      localStorage.setItem("movieList", JSON.stringify(updatedMovies)); // Save updated movie list to localStorage
+      return updatedMovies;
+    });
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -93,10 +128,9 @@ export const MovieProvider = ({ children }: { children: ReactNode }) => {
     }),
     [
       movies,
-      recentSearchQueries,
-      setRecentSearchQueries,
-      setQuery,
       searchMovies,
+      addMovie,
+      recentSearchQueries,
       query,
       loading,
       totalResults,
